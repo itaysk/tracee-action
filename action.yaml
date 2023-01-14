@@ -30,8 +30,8 @@ runs:
       if [[ ! -f "$profile_config" ]]; then
         profile_config="./profile-config.json"
       fi
-      ./profile-gen /tmp/tracee/out/trace_$GITHUB_RUN_ID.jsonl "$profile_config" > /tmp/tracee-action/profile.json
+      ./profile-gen /tmp/tracee/out/trace_$GITHUB_RUN_ID.jsonl "$profile_config" > "/tmp/tracee-action/profile-$(base64 <<< ${{github.workflow_ref}}).json"
   - shell: bash
     run: |
       echo "Checking profile..."
-      ${{github.action_path}}/check.sh /tmp/tracee-action/profile.json ./.tracee/tracee.profile ${{ github.token }} ${{ inputs.fail-on-diff }} ${{ inputs.create-pr }}
+      ${{github.action_path}}/check.sh "/tmp/tracee-action/profile-$(base64 <<< ${{github.workflow_ref}}).json" "./.tracee/profile-$(base64 <<< ${{github.workflow_ref}}).json" ${{ github.token }} ${{ inputs.fail-on-diff }} ${{ inputs.create-pr }}
